@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "viz-neural-network"
+version = "0.1.0"
+description = ""
+authors = ["TomW15 <58078501+TomW15@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "viz_neural_network"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
