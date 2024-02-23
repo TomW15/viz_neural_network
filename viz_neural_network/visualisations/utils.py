@@ -73,6 +73,8 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
     else:
         axs[0].imshow(np.rot90(X, k=3, axes=(0, 1)), cmap='gray')
     axs[0].set_xticklabels([])
+    if len(X_labels):
+        axs[0].set_yticks([*range(len(X_labels))])
     axs[0].set_yticklabels(X_labels)
 
     # Loop over layers of the network
@@ -93,8 +95,8 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
         axs[2 * i + 1].set_yticklabels([])
     
         if (i + 1) == N_LAYERS:
-            axs[2 * (i + 1)].set_yticklabels(y_labels)
             axs[2 * (i + 1)].set_yticks([*range(len(y_labels))])
+            axs[2 * (i + 1)].set_yticklabels(y_labels)
             axs[2 * (i + 1)].yaxis.set_label_position("right")
             axs[2 * (i + 1)].yaxis.tick_right()
         else:
