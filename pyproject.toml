@@ -1,17 +1,26 @@
 [tool.poetry]
 name = "viz-neural-network"
-version = "0.1.0"
-description = ""
+version = "1.0.0"
+description = "Visualise a Neural Network and its inner workings"
 authors = ["TomW15 <58078501+TomW15@users.noreply.github.com>"]
 readme = "README.md"
 packages = [{include = "viz_neural_network"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+numpy = "^1.26.4"
+matplotlib = "^3.8.2"
+tqdm = "^4.66.2"
+opencv-python = "^4.9.0.80"
+torch = "^2.2.1"
+torchvision = "^0.17.1"
+loguru = "^0.7.2"
 
 
 [tool.poetry.group.dev.dependencies]
+# poetry add --group dev
 black = "^24.2.0"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
