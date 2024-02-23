@@ -46,13 +46,18 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
     # Make Prediction
     y_hat = network(X)
 
-    # Create Title based on if prediction is correct or not
-    if torch.argmax(y_hat) == y:
-        title_text = f"Correct, Prediction: {torch.argmax(y_hat)}, Truth: {y}"
-        fig.suptitle(title_text, color="g", fontsize=20)
-    else:
-        title_text = f"Incorrect, Prediction: {torch.argmax(y_hat)}, Truth: {y}"
-        fig.suptitle(title_text, color="r", fontsize=20)
+    try:
+        # Create Title based on if prediction is correct or not
+        if torch.argmax(y_hat) == y:
+            title_text = f"Correct, Prediction: {torch.argmax(y_hat)}, Truth: {y}"
+            fig.suptitle(title_text, color="g", fontsize=20)
+        else:
+            title_text = f"Incorrect, Prediction: {torch.argmax(y_hat)}, Truth: {y}"
+            fig.suptitle(title_text, color="r", fontsize=20)
+    except Exception:
+        fig.suptitle(
+            f"{', '.join([f'{label!r}: y_hat={y_hat[0][i]:.2%}, y={y[i]:.2%}' for i, label in enumerate(y_labels)])}, ",
+            color="b", fontsize=20)
 
     # Get number of layers to determine grid size required
     N_LAYERS = get_number_of_layers(network=network)
@@ -62,7 +67,11 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
     axs = [plt.subplot2grid((1, GRID_SIZE), (0, i), rowspan=1, colspan=1) for i in range(GRID_SIZE)]
 
     # Show X
-    axs[0].imshow(X[0], cmap='gray')
+    # If image then plot image as shown, if column of values, pivot values vertically
+    if len(X.shape) > 2:
+        axs[0].imshow(X[0], cmap='gray')
+    else:
+        axs[0].imshow(np.rot90(X, k=3, axes=(0, 1)), cmap='gray')
     axs[0].set_xticklabels([])
     axs[0].set_yticklabels(X_labels)
 
