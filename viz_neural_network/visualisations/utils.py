@@ -1,9 +1,12 @@
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt            
+from matplotlib.colors import TwoSlopeNorm
 import numpy as np
 import torch
 from torch import nn
 import typing as t
 
+_NORM_ACTIVATION = TwoSlopeNorm(vcenter=0.0)
+_NORM_END = TwoSlopeNorm(vcenter=0.0, vmax=1.0)
 
 def set_activation_hooks(network: nn.Module) -> t.Tuple[t.Dict, t.Dict]:
 
@@ -87,19 +90,21 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
             layer_activated = np.rot90(activated_neurons[i+1], k=3, axes=(0,1))
     
         axs[2 * i + 1].imshow(layer, cmap='RdYlGn')
-        axs[2 * (i + 1)].imshow(layer_activated, cmap='YlGn')
+
         axs[2 * i + 1].set_title(f"L{i} Out")
         axs[2 * (i + 1)].set_title(f"L{i} Activated")
         axs[2 * i + 1].set_xticklabels([])
         axs[2 * (i + 1)].set_xticklabels([])
         axs[2 * i + 1].set_yticklabels([])
-    
+   
         if (i + 1) == N_LAYERS:
+            axs[2 * (i + 1)].imshow(layer_activated, cmap='RdYlGn', norm=_NORM_END)
             axs[2 * (i + 1)].set_yticks([*range(len(y_labels))])
             axs[2 * (i + 1)].set_yticklabels(y_labels)
             axs[2 * (i + 1)].yaxis.set_label_position("right")
             axs[2 * (i + 1)].yaxis.tick_right()
         else:
+            axs[2 * (i + 1)].imshow(layer_activated, cmap='RdYlGn', norm=_NORM_ACTIVATION)
             axs[2 * (i + 1)].set_yticklabels([])
 
     return
