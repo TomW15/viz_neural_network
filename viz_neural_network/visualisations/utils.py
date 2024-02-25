@@ -36,9 +36,13 @@ def get_number_of_layers(network: nn.Module) -> int:
 
 
 
-def visualize_layer_activations(fig: plt.Figure, network: nn.Module, 
-                     X: torch.Tensor, y: torch.Tensor, 
-                     y_labels: t.List, X_labels: t.List = None) -> None:
+def visualize_layer_activations(
+    fig: plt.Figure, network: nn.Module, 
+    X: torch.Tensor, y: torch.Tensor, 
+    y_labels: t.List, X_labels: t.List = None,
+    X_min: float = None, X_max: float = None,
+    y_min: float = None, y_max: float = None,
+) -> None:
 
     if X_labels is None:
         X_labels = []
@@ -69,12 +73,26 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
     # Create number of axes
     axs = [plt.subplot2grid((1, GRID_SIZE), (0, i), rowspan=1, colspan=1) for i in range(GRID_SIZE)]
 
+    X_color_slope = {}
+    X_color_slope["vmin"] = float(torch.min(X)) if X_min is None else X_min
+    X_color_slope["vmax"] = float(torch.max(X)) if X_max is None else X_max
+    assert X_color_slope["vmin"] <= X_color_slope["vmax"]
+    X_color_slope["vcenter"] = (X_color_slope["vmax"] + X_color_slope["vmin"]) / 2
+    X_color_slope = TwoSlopeNorm(**X_color_slope)
+
+    y_color_slope = {}
+    y_color_slope["vmin"] = float(torch.min(y_hat)) if y_min is None else y_min
+    y_color_slope["vmax"] = float(torch.max(y_hat)) if y_max is None else y_max
+    assert y_color_slope["vmin"] <= y_color_slope["vmax"]
+    y_color_slope["vcenter"] = (y_color_slope["vmax"] +  y_color_slope["vmin"]) / 2
+    y_color_slope = TwoSlopeNorm(**y_color_slope)
+
     # Show X
     # If image then plot image as shown, if column of values, pivot values vertically
     if len(X.shape) > 2:
-        axs[0].imshow(X[0], cmap='gray')
+        axs[0].imshow(X[0], cmap="gray", norm=X_color_slope)
     else:
-        axs[0].imshow(np.rot90(X, k=3, axes=(0, 1)), cmap='gray')
+        axs[0].imshow(np.rot90(X, k=3, axes=(0, 1)), cmap="gray", norm=X_color_slope)
     axs[0].set_xticklabels([])
     if len(X_labels):
         axs[0].set_yticks([*range(len(X_labels))])
@@ -98,7 +116,7 @@ def visualize_layer_activations(fig: plt.Figure, network: nn.Module,
         axs[2 * i + 1].set_yticklabels([])
    
         if (i + 1) == N_LAYERS:
-            axs[2 * (i + 1)].imshow(layer_activated, cmap='RdYlGn', norm=_NORM_END)
+            axs[2 * (i + 1)].imshow(layer_activated, cmap='RdYlGn', norm=y_color_slope)
             axs[2 * (i + 1)].set_yticks([*range(len(y_labels))])
             axs[2 * (i + 1)].set_yticklabels(y_labels)
             axs[2 * (i + 1)].yaxis.set_label_position("right")

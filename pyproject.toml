@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "viz-neural-network"
-version = "1.0.3"
+version = "1.1.0"
 description = "Visualise a Neural Network and its inner workings"
 authors = ["TomW15 <58078501+TomW15@users.noreply.github.com>"]
 readme = "README.md"
